@@ -11,8 +11,10 @@ import com.example.weather_forecast.feature.weather_screen.WeatherInteractor
 import com.example.weather_forecast.feature.weather_screen.data.cls.WeatherApiClient
 import com.example.weather_forecast.feature.weather_screen.data.cls.WeatherRemoteSource
 import com.example.weather_forecast.feature.weather_screen.data.cls.WeatherRepoImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,12 +28,16 @@ class MainActivity : AppCompatActivity() {
             WeatherRemoteSource(WeatherApiClient.getApi())
         )))
 
+        val outText = findViewById<TextView>(R.id.outText)
         GlobalScope.launch {
-            Log.d("NET",presenter.interactor.getTemperature())
+            //Log.d("NET",presenter.interactor.getTemperature())
+            withContext(Dispatchers.Main){
+                outText.text = presenter.getWeather()
+            }
         }
 
-        //val outText = findViewById<TextView>(R.id.outText)
-        //outText.text = presenter.getWeather()
+
+
 
     }
 }

@@ -11,6 +11,7 @@ interface IWeatherApi {
     suspend fun getWeather(
         @Query("lat") lat: Double
         ,@Query("lon") lon: Double
+        ,@Query("units") units: String = "metric"
         ,@Query("appid") appid: String = API_KEY
     ):WeatherRemoteModel
 }

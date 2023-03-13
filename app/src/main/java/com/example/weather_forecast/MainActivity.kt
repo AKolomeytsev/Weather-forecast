@@ -3,7 +3,9 @@ package com.example.weather_forecast
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.example.weather_forecast.feature.weather_screen.UI.UiEvent
 import com.example.weather_forecast.feature.weather_screen.UI.ViewState
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -13,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel : com.example.weather_forecast.feature.weather_screen.UI.WeatherScreenViewModel by viewModel()
     private val outText : TextView by lazy { findViewById<TextView>(R.id.outText) }
     private val getTemperatureButton : Button by lazy { findViewById<Button>(R.id.buttonQueryTemperature) }
+    private val progressBarValue : ProgressBar by lazy{findViewById<ProgressBar>(R.id.progessBar)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,15 +26,12 @@ class MainActivity : AppCompatActivity() {
         getTemperatureButton.setOnClickListener {
             viewModel.processUiEvent(UiEvent.OnClickedButton)
         }
-
-        /*GlobalScope.launch {
-            withContext(Dispatchers.Main){
-                outText.text = presenter.getWeather()
-            }
-        }*/
     }
 
     private fun render(viewState: ViewState){
+        progressBarValue.isVisible = viewState.isLoading
         outText.text = "${viewState.title} ${viewState.temperature}"
     }
+
+
 }

@@ -7,24 +7,28 @@ import com.example.weather_forecast.feature.weather_screen.WeatherInteractor
 import kotlinx.coroutines.launch
 
 class WeatherScreenViewModel(val interactor: WeatherInteractor):BaseViewModel<ViewState>() {
-    override fun initialViewState(): ViewState = ViewState(title = "Hellow Word",temperature = "")
+    override fun initialViewState(): ViewState = ViewState(isLoading = false, title = "Hellow Word", temperature = null)
 
     override fun reduce(event: Event, previousState: ViewState): ViewState? {
         when (event) {
             is UiEvent.OnClickedButton -> {
                 viewModelScope.launch {
-                    processDataEvent(DataEvent.onWeatherFethcOk(temperature = interactor.getTemperature()))
+                    interactor.getTemperature().fold(
+                        onSuccess = {
+                            processDataEvent(DataEvent.onWeatherFethcOk(temperature = it.temperature))
+                        },
+                        onError = {
+                            processDataEvent(DataEvent.onWeatherFethcError(error = it))
+                        }
+                    )
                 }
-                return null
-
+                return previousState.copy(isLoading = true)
             }
-
 
             is DataEvent.onWeatherFethcOk ->{
-                return previousState.copy(temperature = event.temperature)
+                return previousState.copy(isLoading = false, temperature = event.temperature)
             }
             else -> return null
-
         }
     }
 }
